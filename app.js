@@ -60,7 +60,7 @@ app.post('/login/', async (request, response) => {
     if (isPasswordMatched) {
       const payload = {username: username}
       const jsonToken = jwt.sign(payload, 'secret')
-      response.send({jsonToken})
+      response.send({jsonToken : jsonToken})
     } else {
       response.status(400).send('Invalid password')
     }
@@ -75,11 +75,12 @@ const authenticateToken = (request, response, next) => {
   }
   if (jwtToken === undefined) {
     response.status(401)
-    response.send('Invalid Access Token')
+    response.send('Invalid JWT Token')
   } else {
     jwt.verify(jwtToken, 'secret', async (error, payload) => {
       if (error) {
-        response.send('Invalid Access Token')
+        response.status(401)
+        response.send('Invalid JWT Token')
       } else {
         next()
       }
